@@ -1,0 +1,17 @@
+nsl:
+  engine:
+    version: "NSL Inference Engine ${project.version}"
+    author: "Author: vilmos.zsombori@gmail.com"
+    base-url: "http://localhost:8080"
+    interaction:
+      url-rewrite: true
+      url-rewrite-key: "img,url"
+      
+  owl:
+    reasoning-level: "owl"
+    transitive-closure: false
+    name-space: "http://shapeshifting.tv/ontology/nsl#"
+    base-model: "ontology/nsl.ttl"
+    static-rules: "ontology/nsl.static.rule"
+    dynamic-rules: 
+
