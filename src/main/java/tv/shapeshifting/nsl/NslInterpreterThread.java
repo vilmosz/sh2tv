@@ -85,7 +85,7 @@ public class NslInterpreterThread implements Runnable {
 		if ( ontology.isMediaObject(individual) ) {		
 			// get the playlist entry
 			try {
-				HashMap<String, Object> pe = ontology.getPlaylistEntry(individual);
+				Map<String, Object> pe = ontology.getPlaylistEntry(individual);
 				if (pe != null) {				
 					//String[] value = new String[] {pe.get("file").toString(), pe.get("in").toString(), pe.get("out").toString()};
 					String key = pe.remove("type").toString();
@@ -164,7 +164,7 @@ public class NslInterpreterThread implements Runnable {
 					try {
 						options = new Vector<Map<String, Object>>();
 						for ( int index = 1; index < binItems.length ; index++ ) {
-							HashMap<String, Object> pe = ontology.getPlaylistEntry(binItems[index]);
+							Map<String, Object> pe = ontology.getPlaylistEntry(binItems[index]);
 		 					pe.remove("type").toString();
 							options.add(pe);
 						}

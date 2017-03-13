@@ -1,7 +1,6 @@
 package tv.shapeshifting.nsl.ontology;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -306,7 +305,7 @@ public class OntologyService implements OntologyInterface {
 			QueryExecution qexec = QueryExecutionFactory.create(query, getRawModel());
 			ResultSet results = qexec.execSelect();
 			try {
-				ArrayList<Individual> res = new ArrayList<Individual>();
+				ArrayList<Individual> res = new ArrayList<>();
 				while (results.hasNext()) {
 					QuerySolution solution = results.nextSolution();
 					RDFNode root = solution.get("root");
@@ -524,7 +523,7 @@ public class OntologyService implements OntologyInterface {
 	 * @see tv.shapeshifting.nsl.ontology.OntologyInterface#getPlaylistEntry(com.hp.hpl.jena.ontology.Individual)
 	 */
 	@Override
-	public HashMap<String, Object> getPlaylistEntry(Individual individual) throws FileNotFoundException, IOException, TimecodeFormatException, UnrecognizedMediatypeException {
+	public Map<String, Object> getPlaylistEntry(Individual individual) throws IOException, TimecodeFormatException, UnrecognizedMediatypeException {
 		String s = SparqlFileRepository.i().get("queries/getPlaylistEntry.query");
 		String queryString = String.format(s, individual.getURI());
 		Query query = QueryFactory.create(queryString);
@@ -1028,6 +1027,18 @@ public class OntologyService implements OntologyInterface {
 	public OntModel getRawModel() {
 		return rawModel;
 	}
+	
+    @Override
+    public Model getModel(ModelType modelType) {
+        switch (modelType) {
+            case INFERENCE:
+                return getInfModel();
+            case ONTOLOGY:
+                return getOntModel();
+            default:
+                return getRawModel();
+        }
+    }	
 	
 	/* (non-Javadoc)
 	 * @see tv.shapeshifting.nsl.ontology.OntologyInterface#update(java.lang.String, com.hp.hpl.jena.rdf.model.Model)

@@ -1,136 +1,139 @@
 package tv.shapeshifting.nsl;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
-
-import tv.shapeshifting.nsl.exceptions.TimecodeFormatException;
-import tv.shapeshifting.nsl.exceptions.UnexpectedNarrativeObjectException;
-import tv.shapeshifting.nsl.exceptions.UnrecognizedMediatypeException;
 
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Model;
 
+import tv.shapeshifting.nsl.exceptions.TimecodeFormatException;
+import tv.shapeshifting.nsl.exceptions.UnexpectedNarrativeObjectException;
+import tv.shapeshifting.nsl.exceptions.UnrecognizedMediatypeException;
+
 public interface OntologyInterface {
-	
-	public void init(final String[] owls, final String[] rules) throws IOException;
 
-	public abstract void addRules(String url, boolean transitive)
-			throws MalformedURLException;
+    public final String NSL_NAMESPACE = "http://shapeshifting.tv/ontology/nsl#";
 
-	public abstract Individual[] getNarrativeRoot() throws IOException;
+    public void init(final String[] owls, final String[] rules) throws IOException;
 
-	public abstract void preprocessSparqlExpressions() throws IOException;
+    public void addRules(String url, boolean transitive)
+            throws MalformedURLException;
 
-	public abstract void preprocessContextVariables() throws IOException;
+    public Individual[] getNarrativeRoot() throws IOException;
 
-	public abstract int applyDynamicRules(boolean transitive)
-			throws MalformedURLException;
+    public void preprocessSparqlExpressions() throws IOException;
 
-	public abstract boolean isAtomic(Individual individual);
+    public void preprocessContextVariables() throws IOException;
 
-	public abstract boolean isMediaObject(Individual individual);
+    public int applyDynamicRules(boolean transitive)
+            throws MalformedURLException;
 
-	public abstract boolean isImplicitObject(Individual individual);
+    public boolean isAtomic(Individual individual);
 
-	public abstract boolean isLinkStructure(Individual individual);
+    public boolean isMediaObject(Individual individual);
 
-	public abstract boolean isBinStructure(Individual individual);
+    public boolean isImplicitObject(Individual individual);
 
-	public abstract boolean isLayerStructure(Individual individual);
+    public boolean isLinkStructure(Individual individual);
 
-	public abstract boolean isDecisionPoint(Individual individual);
+    public boolean isBinStructure(Individual individual);
 
-	public abstract boolean isLink(Individual individual);
+    public boolean isLayerStructure(Individual individual);
 
-	public abstract void setBeingProcessed(Individual individual)
-			throws IOException;
+    public boolean isDecisionPoint(Individual individual);
 
-	public abstract HashMap<String, Object> getPlaylistEntry(
-			Individual individual) throws FileNotFoundException, IOException,
-			TimecodeFormatException, UnrecognizedMediatypeException;
+    public boolean isLink(Individual individual);
 
-	public abstract Vector<HashMap<String, Object>> getInteractions(
-			Individual individual) throws FileNotFoundException, IOException,
-			TimecodeFormatException;
+    public void setBeingProcessed(Individual individual)
+            throws IOException;
 
-	public abstract void updateStructuredObjectTiming(Individual parent,
-			Individual individual) throws IOException;
+    public Map<String, Object> getPlaylistEntry(Individual individual) throws IOException, TimecodeFormatException, UnrecognizedMediatypeException;
 
-	public abstract Individual getMediaObject(Individual individual)
-			throws UnexpectedNarrativeObjectException;
+    public Vector<HashMap<String, Object>> getInteractions(Individual individual) throws IOException, TimecodeFormatException;
 
-	public abstract Individual getStartItemOf(Individual individual)
-			throws UnexpectedNarrativeObjectException;
+    public void updateStructuredObjectTiming(Individual parent, Individual individual) throws IOException;
 
-	public abstract Individual[] getNextLinkStructureItem(Individual individual)
-			throws IOException;
+    public Individual getMediaObject(Individual individual)
+            throws UnexpectedNarrativeObjectException;
 
-	public abstract Individual[] getBinItems(Individual individual)
-			throws IOException;
+    public Individual getStartItemOf(Individual individual)
+            throws UnexpectedNarrativeObjectException;
 
-	public abstract boolean evaluateTerminationCondition(Individual individual)
-			throws IOException;
+    public Individual[] getNextLinkStructureItem(Individual individual)
+            throws IOException;
 
-	public abstract Individual getLeadingLayerOf(Individual individual)
-			throws UnexpectedNarrativeObjectException;
+    public Individual[] getBinItems(Individual individual)
+            throws IOException;
 
-	public abstract Individual[] getNarrativeItemsOf(Individual individual)
-			throws UnexpectedNarrativeObjectException, IOException;
+    public boolean evaluateTerminationCondition(Individual individual)
+            throws IOException;
 
-	public abstract void updateDuration(Individual individual, long duration)
-			throws IOException;
+    public Individual getLeadingLayerOf(Individual individual)
+            throws UnexpectedNarrativeObjectException;
 
-	public abstract boolean hasPlaylistBarrier(Individual individual)
-			throws IOException;
+    public Individual[] getNarrativeItemsOf(Individual individual)
+            throws UnexpectedNarrativeObjectException, IOException;
 
-	public abstract void setHasBeenProcessed(Individual individual)
-			throws IOException;
+    public void updateDuration(Individual individual, long duration)
+            throws IOException;
 
-	public abstract void closeModels();
+    public boolean hasPlaylistBarrier(Individual individual)
+            throws IOException;
 
-	public abstract InfModel getInfModel();
+    public void setHasBeenProcessed(Individual individual)
+            throws IOException;
 
-	public abstract OntModel getOntModel();
+    public void closeModels();
 
-	public abstract OntModel getRawModel();
+    public InfModel getInfModel();
 
-	public abstract void update(String updateString, Model model);
+    public OntModel getOntModel();
 
-	public abstract long construct(String constructString, Model model);
+    public OntModel getRawModel();
+    
+    public Model getModel(ModelType modelType);
 
-	public abstract boolean ask(String askString, Model model);
+    public void update(String updateString, Model model);
 
-	public abstract String logQuery(String queryString, Model model);
+    public long construct(String constructString, Model model);
 
-	public abstract boolean isContextVariableDefined(String label)
-			throws IOException;
+    public boolean ask(String askString, Model model);
 
-	public abstract long defineUntypedContextVariable(String label, Object value)
-			throws IOException;
+    public String logQuery(String queryString, Model model);
 
-	public abstract void setUntypedContextVariable(String label, Object value)
-			throws IOException;
-	
-	public static enum SelectType { 
-		SELECT_ONE("SelectOne"), SELECT_SEQUENCE("SelectSequence"), SELECT_ALTERNATIVES("SelectAlternatives") ;
-		private String value;
-		SelectType(String value) {
-			this.value = value;
-		}
-		public String toString() {
-			return value;
-		}		
-	} ;
+    public boolean isContextVariableDefined(String label)
+            throws IOException;
 
-	public abstract SelectType getSelectType(Individual individual)
-			throws UnexpectedNarrativeObjectException;
+    public long defineUntypedContextVariable(String label, Object value)
+            throws IOException;
 
+    public void setUntypedContextVariable(String label, Object value)
+            throws IOException;
 
-	public static final String NSL_NAMESPACE = "http://shapeshifting.tv/ontology/nsl#";
+    public SelectType getSelectType(Individual individual)
+            throws UnexpectedNarrativeObjectException;
+
+    public enum SelectType {
+        SELECT_ONE("SelectOne"),
+        SELECT_SEQUENCE("SelectSequence"),
+        SELECT_ALTERNATIVES("SelectAlternatives");
+        private String value;
+
+        SelectType(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+    
+    public enum ModelType { RAW, ONTOLOGY, INFERENCE }
 
 }

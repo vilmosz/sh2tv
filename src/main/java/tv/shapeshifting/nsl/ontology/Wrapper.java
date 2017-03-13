@@ -18,19 +18,6 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.mindswap.pellet.jena.PelletReasonerFactory;
 
-import tv.shapeshifting.nsl.ArithmeticExpressionParser;
-import tv.shapeshifting.nsl.MediaTypeMap;
-import tv.shapeshifting.nsl.OntologyInterface;
-import tv.shapeshifting.nsl.Settings;
-import tv.shapeshifting.nsl.exceptions.ArithmeticExpressionEvaluationException;
-import tv.shapeshifting.nsl.exceptions.TimecodeFormatException;
-import tv.shapeshifting.nsl.exceptions.UnexpectedNarrativeObjectException;
-import tv.shapeshifting.nsl.exceptions.UnrecognizedDatatypeException;
-import tv.shapeshifting.nsl.exceptions.UnrecognizedMediatypeException;
-import tv.shapeshifting.nsl.functions.formatUri;
-import tv.shapeshifting.nsl.functions.uuid;
-import tv.shapeshifting.nsl.util.Timecode;
-
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
@@ -56,6 +43,19 @@ import com.hp.hpl.jena.update.UpdateAction;
 import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateRequest;
 import com.hp.hpl.jena.util.FileManager;
+
+import tv.shapeshifting.nsl.ArithmeticExpressionParser;
+import tv.shapeshifting.nsl.MediaTypeMap;
+import tv.shapeshifting.nsl.OntologyInterface;
+import tv.shapeshifting.nsl.Settings;
+import tv.shapeshifting.nsl.exceptions.ArithmeticExpressionEvaluationException;
+import tv.shapeshifting.nsl.exceptions.TimecodeFormatException;
+import tv.shapeshifting.nsl.exceptions.UnexpectedNarrativeObjectException;
+import tv.shapeshifting.nsl.exceptions.UnrecognizedDatatypeException;
+import tv.shapeshifting.nsl.exceptions.UnrecognizedMediatypeException;
+import tv.shapeshifting.nsl.functions.formatUri;
+import tv.shapeshifting.nsl.functions.uuid;
+import tv.shapeshifting.nsl.util.Timecode;
 
 public class Wrapper implements OntologyInterface {
 	
@@ -947,6 +947,18 @@ public class Wrapper implements OntologyInterface {
 		return rawModel;
 	}
 	
+    @Override
+    public Model getModel(ModelType modelType) {
+        switch (modelType) {
+            case INFERENCE:
+                return getInfModel();
+            case ONTOLOGY:
+                return getOntModel();
+            default:
+                return getRawModel();
+        }
+    }
+		
 	/* (non-Javadoc)
 	 * @see tv.shapeshifting.nsl.ontology.OntologyInterface#update(java.lang.String, com.hp.hpl.jena.rdf.model.Model)
 	 */
