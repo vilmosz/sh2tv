@@ -7,10 +7,9 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -18,47 +17,48 @@ import tv.shapeshifting.nsl.OntologyInterface;
 import tv.shapeshifting.nsl.OntologyInterface.ModelType;
 import tv.shapeshifting.nsl.Settings;
 
-@RestController
-@RequestMapping(value = "query")
+@Controller
 public class QueryController extends AbstractController {
 
     public enum Command { QUERY, CONSTRUCT, UPDATE }
+    
+    public static final String RESULT       = "result";
+    public static final String SESSION_ID   = "sessionId";
+    public static final String QUERY        = "query";
+    public static final String COMMAND      = "command";
+    public static final String MODEL_TYPE   = "modelType";
 
     private static final Logger LOG = LoggerFactory.getLogger(QueryController.class);
 
-    @GetMapping
-    public String query(
-            @RequestParam(value = "command", required = false, defaultValue = "QUERY") final Command command,
-            @RequestParam(value = "modelType", required = false, defaultValue = "RAW") ModelType modelType,
-            @RequestParam(value = "query") final String query,
-            final HttpServletRequest request) throws IOException  {
-        HttpSession session = request.getSession();
-        String id = session.getId();
-        LOG.debug("Session id: " + id);     
-        
-        if(session.getAttribute(Settings.ONTOLOGY) != null && query != null) {
-            request.setAttribute("query", query);
-
-            OntologyInterface ow = (OntologyInterface) session.getAttribute(Settings.ONTOLOGY);
-            
-            String res = "";
-            Model model = ow.getModel(modelType);
-            switch(command) {
-                case QUERY:
-                    res = ow.logQuery(query, model);
-                    break;
-                case CONSTRUCT:
-                    res = "" + ow.construct(query, model);
-                    break;
-                case UPDATE:
-                    ow.update(query, model);
-                    break;            
-            }
-            request.setAttribute("result", res);
+    @RequestMapping(value = "query")
+    public String executeQuery(final HttpServletRequest request, org.springframework.ui.Model uiModel,
+            @RequestParam(value = COMMAND, required = false, defaultValue = "QUERY") final Command command,
+            @RequestParam(value = MODEL_TYPE, required = false, defaultValue = "RAW") ModelType modelType,
+            @RequestParam(value = QUERY, required = false) final String query) throws IOException  {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            LOG.debug("No session");            
         } else {
-            LOG.debug("Ontology not initialized for session id " + id);
+            LOG.debug(String.format("Session id: [%s]", session.getId()));     
+            uiModel.addAttribute(SESSION_ID, session.getId());
+            if(session.getAttribute(Settings.ONTOLOGY) != null && query != null) {
+                OntologyInterface ow = (OntologyInterface) session.getAttribute(Settings.ONTOLOGY);
+                Model model = ow.getModel(modelType);
+                switch(command) {
+                    case QUERY:
+                        uiModel.addAttribute(RESULT, ow.logQuery(query, model));
+                        break;
+                    case CONSTRUCT:
+                        uiModel.addAttribute(RESULT, "" + ow.construct(query, model));
+                        break;
+                    case UPDATE:
+                        ow.update(query, model);
+                        break;            
+                }
+            }
         }
-        
-        return "query";
+        uiModel.addAttribute(QUERY, query);
+        return QUERY;
     }
+    
 }
